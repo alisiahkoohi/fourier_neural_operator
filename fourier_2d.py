@@ -39,7 +39,7 @@ class SpectralConv2d(nn.Module):
         super(SpectralConv2d, self).__init__()
 
         """
-        2D Fourier layer. It does FFT, linear transform, and Inverse FFT.    
+        2D Fourier layer. It does FFT, linear transform, and Inverse FFT.
         """
 
         self.in_channels = in_channels
@@ -77,10 +77,10 @@ class SimpleBlock2d(nn.Module):
         2. 4 layers of the integral operators u' = (W + K)(u).
             W defined by self.w; K defined by self.conv .
         3. Project from the channel space to the output space by self.fc1 and self.fc2 .
-        
+
         input: the solution of the coefficient function and locations (a(x, y), x, y)
         input shape: (batchsize, x=s, y=s, c=3)
-        output: the solution 
+        output: the solution
         output shape: (batchsize, x=s, y=s, c=1)
         """
 
@@ -186,12 +186,12 @@ s = h
 # load data and data normalization
 ################################################################
 reader = MatReader(TRAIN_PATH)
-x_train = reader.read_field('coeff')[:ntrain,::r,::r][:,:s,:s]
-y_train = reader.read_field('sol')[:ntrain,::r,::r][:,:s,:s]
+x_train = reader.read_field('sol')[:ntrain,::r,::r][:,:s,:s]
+y_train = reader.read_field('coeff')[:ntrain,::r,::r][:,:s,:s]
 
 reader.load_file(TEST_PATH)
-x_test = reader.read_field('coeff')[:ntest,::r,::r][:,:s,:s]
-y_test = reader.read_field('sol')[:ntest,::r,::r][:,:s,:s]
+x_test = reader.read_field('sol')[:ntest,::r,::r][:,:s,:s]
+y_test = reader.read_field('coeff')[:ntest,::r,::r][:,:s,:s]
 
 x_normalizer = UnitGaussianNormalizer(x_train)
 x_train = x_normalizer.encode(x_train)
@@ -262,3 +262,5 @@ for ep in range(epochs):
 
     t2 = default_timer()
     print(ep, t2-t1, train_mse, rel_err)
+
+torch.save(model.state_dict(), 'reverse_training.pt')
